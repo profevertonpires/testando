@@ -1,38 +1,133 @@
 pipeline {
+
     agent any
+
     tools {
-        // Nome da instalação do Maven configurada no Jenkins
-        maven 'Maven3' 
+        maven 'Maven3'
+        jdk 'Java21'
     }
+
+    environment {
+        APP_NAME = "testando"
+    }
+
     stages {
+
         stage('Checkout') {
+
             steps {
-                git branch: 'main', url: 'URL_DO_SEU_REPOSITORIO.git'
+                git branch: "${env.BRANCH_NAME}",
+                url: 'https://github.com/profevertonpires/testando.git'
             }
+
         }
+
         stage('Build') {
+
             steps {
-                // Compila o código sem rodar testes
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean compile'
             }
+
         }
-        stage('Test') {
+
+        stage('Tests') {
+
             steps {
-                // Executa testes unitários
                 sh 'mvn test'
             }
-            post {
-                always {
-                    // Publica resultados dos testes
-                    junit '**/target/surefire-reports/*.xml'
-                }
-            }
+
         }
-        stage('Deploy') {
+
+        stage('Package') {
+
             steps {
-                echo 'Implantando a aplicação...'
-                // Exemplo: sh './deploy.sh'
+                sh 'mvn clean package -DskipTests'
             }
+
         }
+
+        stage('Deploy DEV') {
+
+            when {
+                branch 'develop'
+            }
+
+            steps {
+
+                echo "Deploy DEV"
+
+                sh '''
+                pkill -f spring-app || true
+
+                nohup java \
+                -jar target/*.jar \
+                --spring.profiles.active=dev \
+                > dev.log 2>&1 &
+                '''
+            }
+
+        }
+
+        stage('Deploy HOMOLOG') {
+
+            when {
+                branch 'homolog'
+            }
+
+            steps {
+
+                echo "Deploy HOMOLOG"
+
+                sh '''
+                pkill -f spring-app || true
+
+                nohup java \
+                -jar target/*.jar \
+                --spring.profiles.active=homolog \
+                > homolog.log 2>&1 &
+                '''
+            }
+
+        }
+
+        stage('Deploy PROD') {
+
+            when {
+                branch 'main'
+            }
+
+            steps {
+
+                echo "Deploy PROD"
+
+                sh '''
+                pkill -f spring-app || true
+
+                nohup java \
+                -jar target/*.jar \
+                --spring.profiles.active=prod \
+                > prod.log 2>&1 &
+                '''
+            }
+
+        }
+
     }
+
+    post {
+
+        success {
+
+            echo 'Pipeline executada com sucesso!'
+
+        }
+
+        failure {
+
+            echo 'Erro na pipeline!'
+
+        }
+
+    }
+
 }
