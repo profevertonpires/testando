@@ -7,6 +7,8 @@ pipeline {
         jdk 'Java21'
     }
 
+
+    
     environment {
         APP_NAME = "testando"
     }
