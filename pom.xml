@@ -39,7 +39,7 @@
             <configuration>
                 <archive>
                     <manifest>
-                        <mainClass>com.seuprojeto.Main</mainClass>
+                        <mainClass>testando.SpringWebApiApplication</mainClass>
                     </manifest>
                 </archive>
             </configuration>
