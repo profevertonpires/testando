@@ -16,6 +16,10 @@ public class ProdutoController {
     // GET
     @GetMapping
     public List<Produto> listarProdutos() {
+
+        produtos.add(new Produto(Long.parseLong("1"), "produto1", 22));
+        produtos.add(new Produto(Long.parseLong("2"), "produto2", 13));
+        
         return produtos;
     }
 
