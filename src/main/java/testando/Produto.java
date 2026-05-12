@@ -5,6 +5,7 @@ public class Produto {
     private Long id;
     private String nome;
     private double preco;
+    private int nota=0;
 
     public Produto() {
     }
