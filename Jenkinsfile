@@ -7,10 +7,8 @@ pipeline {
         jdk 'Java21'
     }
 
-
-    
     environment {
-        APP_NAME = "testando"
+        APP_NAME = "testando-1.0.jar"
     }
 
     stages {
@@ -18,7 +16,7 @@ pipeline {
         stage('Checkout') {
 
             steps {
-                git branch: "${env.BRANCH_NAME}",
+                 git branch: "main",
                 url: 'https://github.com/profevertonpires/testando.git'
             }
 
@@ -47,81 +45,26 @@ pipeline {
             }
 
         }
-
-        stage('Deploy DEV') {
-
-            when {
-                branch 'develop'
-            }
+        
+         stage('MatarServico') {
 
             steps {
-
-                echo "Deploy DEV"
-
-                sh '''
-                pkill -f spring-app || true
-
-                nohup java \
-                -jar target/*.jar \
-                --spring.profiles.active=dev \
-                > dev.log 2>&1 &
-                '''
+                sh 'pkill -9 -f ${APP_NAME} || true' 
             }
-
         }
-
-        stage('Deploy HOMOLOG') {
-
-            when {
-                branch 'homolog'
-            }
+        
+        stage('SubirServico') {
 
             steps {
-
-                echo "Deploy HOMOLOG"
-
-                sh '''
-                pkill -f spring-app || true
-
-                nohup java \
-                -jar target/*.jar \
-                --spring.profiles.active=homolog \
-                > homolog.log 2>&1 &
-                '''
+                 sh 'JENKINS_NODE_COOKIE=dontKillMe nohup java -jar /var/lib/jenkins/workspace/segunda_22horas/target/${APP_NAME}  > prod.log 2>&1 &'
             }
-
         }
-
-        stage('Deploy PROD') {
-
-            when {
-                branch 'main'
-            }
-
-            steps {
-
-                echo "Deploy PROD"
-
-                sh '''
-                pkill -f spring-app || true
-
-                nohup java \
-                -jar target/*.jar \
-                --spring.profiles.active=prod \
-                > prod.log 2>&1 &
-                '''
-            }
-
-        }
-
     }
 
     post {
 
         success {
-
             echo 'Pipeline executada com sucesso!'
-
         }
 
         failure {
