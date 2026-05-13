@@ -1,0 +1,45 @@
+# --- Spring Boot / Maven / Gradle ---
+target/
+build/
+.settings/
+.classpath
+.project
+.metadata/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+
+# --- IDEs ---
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Eclipse / Spring Tool Suite (STS)
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# VS Code
+.vscode/
+
+# --- Sistemas Operacionais ---
+.DS_Store
+Thumbs.db
+
+# --- Logs e Arquivos Temporários ---
+logs/
+*.log
+*.tmp
+*.bak
+*.swp
+
+# --- Variáveis de Ambiente e Segredos (CRÍTICO) ---
+.env
+# Recomendado: ignorar application.properties/yml e usar application.yml.example
+# src/main/resources/application.properties
+# src/main/resources/application.yml
+
